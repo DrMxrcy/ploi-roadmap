@@ -2,18 +2,35 @@ FROM php:8.1-apache
 
 WORKDIR /var/www
 
-RUN chown -R www-data:www-data /var/www
+RUN chown -R 33:33 /var/www
 
 WORKDIR /var/www/html
 COPY . /var/www/html
 
 #install GD
-RUN apk add --no-cache freetype libpng libjpeg-turbo   \
-  && apk add --virtual build-deps freetype-dev libpng-dev libjpeg-turbo-dev \
-  && docker-php-ext-configure gd  --with-freetype=/usr/include/  --with-jpeg=/usr/include/ \
-  && nproc=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-  && docker-php-ext-install -j${nproc} gd \
-  && apk del build-deps
+RUN set -eux; apt-get update; \
+	apt-get install -y --no-install-recommends libpq-dev \
+	#
+	# install curl
+	libcurl4-openssl-dev \
+	#
+	# install gd dependencies
+	zlib1g-dev libpng-dev libjpeg-dev \
+	libwebp-dev libxpm-dev libfreetype6-dev; \
+	#
+	# clean up
+	rm -rf /var/lib/apt/lists/*; \
+	#
+	# configure extensions
+	docker-php-ext-configure gd --enable-gd \
+	--with-jpeg --with-webp --with-xpm --with-freetype; \
+	#
+	# install extensions
+	docker-php-ext-install curl gd pdo pdo_mysql pdo_pgsql exif; \
+	#
+	# set up environment
+	a2enmod rewrite;
+
 
 RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip \
     && docker-php-ext-install zip
@@ -33,7 +50,7 @@ RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ## Final Run
-RUN chown -R www-data:www-data /var/www
+RUN chown 33:33 /var/www
 
 # Expose port 9000 and start server
 ARG PORT=9000
