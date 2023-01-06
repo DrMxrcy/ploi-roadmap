@@ -26,5 +26,6 @@ php artisan view:clear -- quiet
 echo -e "[INFO] Migrating Database"
 php artisan migrate --force -- quiet
 
-echo -e "[INFO] Initialization Has Finished"
+php artisan roadmap:install
+echo -e "[INFO] Running On Port 9000"
 
