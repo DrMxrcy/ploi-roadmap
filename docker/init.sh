@@ -1,5 +1,5 @@
 #!/bin/bash
-
+composer update
 composer install
 npm ci
 php artisan route:cache
