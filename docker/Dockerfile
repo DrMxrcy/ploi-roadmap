@@ -50,3 +50,6 @@ CMD ["./docker/init.sh"]
 EXPOSE 9000
 CMD ["php-fpm"]
 
+VOLUME /vendor
+VOLUME /var/www/html
+
