@@ -19,7 +19,7 @@ RUN set -eux; apt-get update; \
     icu-dev
 	#
 	# install gd dependencies
-	zlib1g-dev libpng-dev libjpeg-dev \
+	libpng-dev libjpeg-dev \
 	libwebp-dev libxpm-dev libfreetype6-dev; \
 	#
 	# clean up
