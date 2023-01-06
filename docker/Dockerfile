@@ -47,7 +47,7 @@ RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 #Run SH
 RUN chmod +x ./docker/init.sh
-CMD ["./docker/init.sh"]
+CMD ["docker/init.sh"]
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
