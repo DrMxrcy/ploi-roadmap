@@ -42,7 +42,6 @@ CMD ["php-fpm"]
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer update
 RUN composer install --no-scripts --no-dev
 RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 
