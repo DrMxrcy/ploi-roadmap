@@ -13,6 +13,10 @@ RUN set -eux; apt-get update; \
 	#
 	# install curl
 	libcurl4-openssl-dev \
+    # install zip
+    libzip-dev \
+    # install icu
+    icu-dev
 	#
 	# install gd dependencies
 	zlib1g-dev libpng-dev libjpeg-dev \
@@ -24,19 +28,17 @@ RUN set -eux; apt-get update; \
 	# configure extensions
 	docker-php-ext-configure gd --enable-gd \
 	--with-jpeg --with-webp --with-xpm --with-freetype; \
+    docker-php-ext-configure zip \
 	#
 	# install extensions
-	docker-php-ext-install curl gd pdo pdo_mysql pdo_pgsql exif; \
+	docker-php-ext-install curl gd sockets intl pdo pdo_mysql pdo_pgsql exif zip; \
 	#
 	# set up environment
 	a2enmod rewrite;
 
 
-RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip \
-    && docker-php-ext-install zip
-
 # Install nodejs
-RUN apk add npm
+RUN apt-get npm
 
 # Upgrading Node
 RUN npm cache clean -f
