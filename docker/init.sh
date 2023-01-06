@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+
+echo -e "Initializing App"
 
 cd /var/www/html
 npm ci
