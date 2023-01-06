@@ -1,5 +1,9 @@
 FROM php:8.1.5-fpm-alpine3.15
 
+WORKDIR /var/www
+
+RUN chown -R www-data:www-data /var/www
+
 WORKDIR /var/www/html
 COPY ./ /var/www/html
 
@@ -38,15 +42,13 @@ CMD ["php-fpm"]
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer update
+RUN composer install --no-scripts --no-dev
+RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 #Run SH
 RUN chmod +x ./docker/init.sh
 CMD ["./docker/init.sh"]
-
-# Set working directory
-WORKDIR /var/www
-
-RUN chown -R www-data:www-data /var/www
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
