@@ -35,6 +35,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 ## Final Run
 RUN chown -R www-data:www-data /var/www
 
+# Expose port 9000 and start server
+ARG PORT=9000
+EXPOSE 9000
+
+
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-scripts --no-dev
@@ -44,8 +49,6 @@ RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 RUN chmod +x docker/init.sh
 CMD ["docker/init.sh"]
 
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
 
 VOLUME /vendor
 VOLUME /var/www/html
