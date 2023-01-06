@@ -45,9 +45,6 @@ RUN npm cache clean -f
 RUN npm install -g n
 
 
-RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
-      && docker-php-ext-install intl pdo pdo_mysql sockets
-
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
