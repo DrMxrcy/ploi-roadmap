@@ -5,7 +5,7 @@ WORKDIR /var/www
 RUN chown -R www-data:www-data /var/www
 
 WORKDIR /var/www/html
-COPY ./ /var/www/html
+COPY . /var/www/html
 
 #install GD
 RUN apk add --no-cache freetype libpng libjpeg-turbo   \
@@ -46,7 +46,7 @@ RUN composer install --no-scripts --no-dev
 RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 #Run SH
-RUN chmod +x ./docker/init.sh
+RUN chmod +x docker/init.sh
 CMD ["docker/init.sh"]
 
 # Expose port 9000 and start php-fpm server
@@ -55,4 +55,4 @@ CMD ["php-fpm"]
 
 VOLUME /vendor
 VOLUME /var/www/html
-
+VOLUME /storage
