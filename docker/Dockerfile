@@ -5,7 +5,7 @@ WORKDIR /var/www
 RUN chown -R www-data:www-data /var/www
 
 WORKDIR /var/www/html
-COPY ../ /var/www/html
+COPY ./ /var/www/html
 
 #install GD
 RUN apk add --no-cache freetype libpng libjpeg-turbo   \
