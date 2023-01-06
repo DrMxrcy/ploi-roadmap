@@ -27,5 +27,7 @@ echo -e "[INFO] Migrating Database"
 php artisan migrate --force -- quiet
 
 php artisan roadmap:install
+
+php-fpm
 echo -e "[INFO] Running On Port 9000"
 
