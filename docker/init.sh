@@ -3,7 +3,7 @@
 echo -e "Initializing App"
 
 cd ../
-compose update
+composer update
 npm ci
 php artisan route:cache
 php artisan view:clear
