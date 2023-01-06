@@ -44,8 +44,8 @@ WORKDIR /var/www
 
 RUN chown -R www-data:www-data /var/www
 
-RUN chmod +x ./docker/init.sh
-CMD ["./docker/init.sh"]
+RUN chmod +x ./html/docker/init.sh
+CMD ["./html/docker/init.sh"]
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
