@@ -2,7 +2,7 @@
 
 echo -e "Initializing App"
 
-cd /var/www/html
+cd ../
 npm ci
 php artisan route:cache
 php artisan view:clear
