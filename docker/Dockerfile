@@ -1,59 +1,43 @@
-FROM php:8.1-apache
+FROM php:8.1.5-fpm-alpine3.15
 
 WORKDIR /var/www
 
-RUN chown -R 33:33 /var/www
+RUN chown -R www-data:www-data /var/www
 
 WORKDIR /var/www/html
 COPY . /var/www/html
 
 #install GD
-RUN set -eux; apt-get update; \
-	apt-get install -y --no-install-recommends libpq-dev \
-	#
-	# install curl
-	libcurl4-openssl-dev \
-    # install zip
-    libzip-dev \
-    # install icu
-    icu-dev
-	#
-	# install gd dependencies
-	libpng-dev libjpeg-dev \
-	libwebp-dev libxpm-dev libfreetype6-dev; \
-	#
-	# clean up
-	rm -rf /var/lib/apt/lists/*; \
-	#
-	# configure extensions
-	docker-php-ext-configure gd --enable-gd \
-	--with-jpeg --with-webp --with-xpm --with-freetype; \
-    docker-php-ext-configure zip \
-	#
-	# install extensions
-	docker-php-ext-install curl gd sockets intl pdo pdo_mysql pdo_pgsql exif zip; \
-	#
-	# set up environment
-	a2enmod rewrite;
+RUN apk add --no-cache freetype libpng libjpeg-turbo   \
+  && apk add --virtual build-deps freetype-dev libpng-dev libjpeg-turbo-dev \
+  && docker-php-ext-configure gd  --with-freetype=/usr/include/  --with-jpeg=/usr/include/ \
+  && nproc=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
+  && docker-php-ext-install -j${nproc} gd \
+  && apk del build-deps
 
+RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip \
+    && docker-php-ext-install zip
 
 # Install nodejs
-RUN apt-get npm
+RUN apk add npm
 
 # Upgrading Node
 RUN npm cache clean -f
 RUN npm install -g n
 
 
+RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
+      && docker-php-ext-install intl pdo pdo_mysql sockets
+
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ## Final Run
-RUN chown 33:33 /var/www
+RUN chown -R www-data:www-data /var/www
 
-# Expose port 9000 and start server
-ARG PORT=9000
+# Expose port 9000 and start php-fpm server
 EXPOSE 9000
+CMD ["php-fpm"]
 
 
 # Get latest Composer
@@ -62,10 +46,12 @@ RUN composer install --no-scripts --no-dev
 RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 #Run SH
-RUN chmod +x docker/init.sh
+RUN chmod +x ./docker/init.sh
 CMD ["docker/init.sh"]
 
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
 
 VOLUME /vendor
 VOLUME /var/www/html
-VOLUME /storage
