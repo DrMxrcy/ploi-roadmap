@@ -41,7 +41,7 @@ jobs:
       - name: Build and push image
         uses: docker/build-push-action@v3
         with:
-          context: /docker/.
+          context: ./docker/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.builder-meta.outputs.tags }}
