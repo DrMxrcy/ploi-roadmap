@@ -1,6 +1,7 @@
 FROM php:8.1.5-fpm-alpine3.15
 
 WORKDIR /var/www/html
+COPY ./ /var/www/html
 
 #install GD
 RUN apk add --no-cache freetype libpng libjpeg-turbo   \
@@ -20,12 +21,19 @@ RUN apk add npm
 RUN npm cache clean -f
 RUN npm install -g n
 
+
 RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
       && docker-php-ext-install intl pdo pdo_mysql sockets
 
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+## Final Run
+RUN composer install
+RUN npm ci
+RUN php artisan route:cache
+RUN php artisan view:clear
+RUN php artisan migrate --force
 RUN chown -R www-data:www-data /var/www
 
 # Expose port 9000 and start php-fpm server
