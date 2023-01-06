@@ -2,11 +2,7 @@ name: Publish Docker images
 
 on:
   create:
-    tags: ['v*']
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    tags: ['*']
 
 jobs:
   push_builder:

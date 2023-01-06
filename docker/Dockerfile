@@ -29,11 +29,7 @@ RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 ## Final Run
-RUN composer install
-RUN npm ci
-RUN php artisan route:cache
-RUN php artisan view:clear
-RUN php artisan migrate --force
+CMD ["./docker/init.sh"]
 RUN chown -R www-data:www-data /var/www
 
 # Expose port 9000 and start php-fpm server
@@ -52,3 +48,4 @@ RUN chown -R www-data:www-data /var/www
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
+
