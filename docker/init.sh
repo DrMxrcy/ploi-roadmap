@@ -12,17 +12,17 @@ sleep 5
 echo -e "[INFO] Initializing App"
 
 echo -e "[INFO] Installing Packages"
-composer update --quiet
+composer update 
 npm ci -- silent
 
 echo -e "[INFO] Clearing Route Cache"
-php artisan route:cache -- quiet
+php artisan route:cache 
 
 echo -e "[INFO] Clearing View Cache"
-php artisan view:clear -- quiet
+php artisan view:clear 
 
 echo -e "[INFO] Migrating Database"
-php artisan migrate --force -- quiet
+php artisan migrate 
 
 php artisan roadmap:install
 
