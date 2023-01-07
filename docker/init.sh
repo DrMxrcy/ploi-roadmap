@@ -13,7 +13,7 @@ echo -e "[INFO] Initializing App"
 
 echo -e "[INFO] Installing Packages"
 composer update 
-npm ci -- silent
+npm ci 
 
 echo -e "[INFO] Clearing Route Cache"
 php artisan route:cache 
