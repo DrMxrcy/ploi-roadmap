@@ -12,8 +12,11 @@ sleep 5
 echo -e "[INFO] Initializing App"
 
 echo -e "[INFO] Installing Packages"
+
 composer update 
 npm ci 
+
+cd ../
 
 echo -e "[INFO] Clearing Route Cache"
 php artisan route:cache 
