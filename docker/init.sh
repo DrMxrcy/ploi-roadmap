@@ -28,9 +28,8 @@ php artisan view:clear
 
 echo -e "[INFO] Migrating Database"
 php artisan migrate 
-
-php-fpm
 echo -e "[INFO] Running On Port 9000"
 
 echo -e "[INFO] To Finish Setup, Run php artisan roadmap:install and type yes for everything"
+php-fpm
 
