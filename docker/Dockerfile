@@ -14,21 +14,21 @@ COPY . /www/html
 ENV NGINX_WEBROOT=/www/html \
     NGINX_SITE_ENABLED=ploi-roadmap \
     PHP_KITCHENSINK=TRUE \
-    
-
-
-# Install nodejs
-RUN apk add npm
-
-# Upgrading Node
-RUN npm cache clean -f
-RUN npm install -g n
-
       
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-scripts --no-dev
 RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
+
+RUN composer install --ignore-platform-reqs && \
+apk add npm \
+    rm -rf /root/.composer \
+           /var/tmp/*
+           
+# Upgrading Node
+RUN npm cache clean -f
+RUN npm install -g n           
+
 
 #Run SH
 RUN chmod +x ./docker/init.sh
