@@ -5,7 +5,7 @@ FROM docker.io/tiredofit/nginx-php-fpm:${PHP_BASE}-${DISTRO}
 
 WORKDIR /var/www
 
-RUN chown -R www-data:www-data /var/www
+RUN chown -R "${NGINX_USER}":"${NGINX_GROUP}" /var/www
 
 WORKDIR /var/www/html
 COPY . /var/www/html
@@ -31,14 +31,7 @@ RUN npm install -g n
 
 RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
       && docker-php-ext-install intl pdo pdo_mysql sockets
-
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-## Final Run
-RUN chown -R www-data:www-data /var/www
-
-
+      
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-scripts --no-dev
