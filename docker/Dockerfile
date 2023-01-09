@@ -7,19 +7,15 @@ WORKDIR /var/www
 
 RUN chown -R "${NGINX_USER}":"${NGINX_GROUP}" /var/www
 
-WORKDIR /var/www/html
-COPY . /var/www/html
+WORKDIR /www/html
+COPY . /www/html
 
 #install GD
-RUN apk add --no-cache freetype libpng libjpeg-turbo   \
-  && apk add --virtual build-deps freetype-dev libpng-dev libjpeg-turbo-dev \
-  && docker-php-ext-configure gd  --with-freetype=/usr/include/  --with-jpeg=/usr/include/ \
-  && nproc=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
-  && docker-php-ext-install -j${nproc} gd \
-  && apk del build-deps
+ENV NGINX_WEBROOT=/www/html \
+    NGINX_SITE_ENABLED=ploi-roadmap \
+    PHP_KITCHENSINK=TRUE \
+    
 
-RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip \
-    && docker-php-ext-install zip
 
 # Install nodejs
 RUN apk add npm
@@ -28,9 +24,6 @@ RUN apk add npm
 RUN npm cache clean -f
 RUN npm install -g n
 
-
-RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
-      && docker-php-ext-install intl pdo pdo_mysql sockets
       
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -39,7 +32,6 @@ RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 #Run SH
 RUN chmod +x ./docker/init.sh
-CMD ["docker/init.sh"]
 
 # Expose port 9000
 EXPOSE 9000
