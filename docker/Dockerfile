@@ -8,12 +8,12 @@ WORKDIR /var/www
 RUN chown -R "${NGINX_USER}":"${NGINX_GROUP}" /var/www
 
 WORKDIR /www/html
-COPY /www/html /
+COPY / /www/html 
 
 #install GD
 ENV NGINX_WEBROOT=/www/html \
     NGINX_SITE_ENABLED=ploi-roadmap \
-    PHP_KITCHENSINK=TRUE \
+    PHP_KITCHENSINK=TRUE
       
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
