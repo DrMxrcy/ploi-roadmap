@@ -1,4 +1,7 @@
-FROM php:8.1.5-fpm-alpine3.15
+ARG PHP_BASE=8.1
+ARG DISTRO="alpine"
+
+FROM docker.io/tiredofit/nginx-php-fpm:${PHP_BASE}-${DISTRO}
 
 WORKDIR /var/www
 
