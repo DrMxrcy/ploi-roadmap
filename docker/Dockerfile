@@ -8,7 +8,7 @@ WORKDIR /var/www
 RUN chown -R "${NGINX_USER}":"${NGINX_GROUP}" /var/www
 
 WORKDIR /www/html
-COPY ./ /www/html 
+COPY . /www/html 
 
 #install GD
 ENV NGINX_WEBROOT=/www/html \
