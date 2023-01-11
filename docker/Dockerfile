@@ -8,7 +8,7 @@ WORKDIR /var/www
 RUN chown -R "${NGINX_USER}":"${NGINX_GROUP}" /var/www
 
 WORKDIR /www/html
-COPY / /www/html 
+COPY ./ /www/html 
 
 #install GD
 ENV NGINX_WEBROOT=/www/html \
@@ -17,6 +17,7 @@ ENV NGINX_WEBROOT=/www/html \
       
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install --no-scripts --no-dev
 RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
 
 RUN composer install --ignore-platform-reqs && \
