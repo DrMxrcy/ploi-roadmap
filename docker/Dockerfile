@@ -49,7 +49,8 @@ CMD ["php-fpm"]
 
 
 #Run SH
-# RUN chmod +x ./docker/init.sh
+ RUN chmod +x .html//docker/init.sh
+ CMD ["html/docker/init.sh"]
 
 VOLUME /vendor
 VOLUME /var/www/html
