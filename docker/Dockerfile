@@ -33,7 +33,7 @@ EXPOSE 9000
 CMD ["php-fpm"]
 
 #Run SH
- RUN chmod +x ./docker/init.sh
+# RUN chmod +x ./docker/init.sh
  CMD ["docker/init.sh"]
 
 VOLUME /vendor
