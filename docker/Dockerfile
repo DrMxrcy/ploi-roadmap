@@ -1,6 +1,6 @@
 FROM php:8.1.5-fpm-alpine3.15
 
-COPY .
+COPY . /
 
 WORKDIR /var/www/html
 
