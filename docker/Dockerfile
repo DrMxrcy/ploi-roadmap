@@ -1,40 +1,54 @@
-ARG PHP_BASE=8.1
-ARG DISTRO="alpine"
+FROM php:8.1.5-fpm-alpine3.15
 
-FROM docker.io/tiredofit/nginx-php-fpm:${PHP_BASE}-${DISTRO}
-
-WORKDIR /var/www
-
-RUN chown -R "${NGINX_USER}":"${NGINX_GROUP}" /var/www
-
-WORKDIR /www/html
-COPY . /www/html 
+WORKDIR /var/www/html
 
 #install GD
-ENV NGINX_WEBROOT=/www/html \
-    NGINX_SITE_ENABLED=ploi-roadmap \
-    PHP_KITCHENSINK=TRUE
-      
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-scripts --no-dev
-RUN composer install --no-dev --optimize-autoloader --classmap-authoritative
+RUN apk add --no-cache freetype libpng libjpeg-turbo   \
+  && apk add --virtual build-deps freetype-dev libpng-dev libjpeg-turbo-dev \
+  && docker-php-ext-configure gd  --with-freetype=/usr/include/  --with-jpeg=/usr/include/ \
+  && nproc=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1) \
+  && docker-php-ext-install -j${nproc} gd \
+  && apk del build-deps
 
-RUN composer install --ignore-platform-reqs && \
-apk add npm \
-    rm -rf /root/.composer \
-           /var/tmp/*
-           
+RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip \
+    && docker-php-ext-install zip
+
+# Install nodejs
+RUN apk add npm
+
 # Upgrading Node
 RUN npm cache clean -f
-RUN npm install -g n           
+RUN npm install -g n
+
+RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
+      && docker-php-ext-install intl pdo pdo_mysql sockets
+
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+RUN chown -R www-data:www-data /var/www
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
+
+
+# Get latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Set working directory
+WORKDIR /var/www
+
+RUN chown -R www-data:www-data /var/www
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
+        
 
 
 #Run SH
 RUN chmod +x ./docker/init.sh
-
-# Expose port 9000
-EXPOSE 9000
 
 VOLUME /vendor
 VOLUME /var/www/html
