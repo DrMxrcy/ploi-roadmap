@@ -26,31 +26,15 @@ RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Expose port 9000
-RUN chown -R www-data:www-data /var/www
+RUN chown -R www-data:www-data /var/www/html
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
-
-
-# Get latest Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Set working directory
-WORKDIR /var/www
-
-RUN chown -R www-data:www-data /var/www
-
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
-
-
 
 #Run SH
- RUN chmod +x .html/docker/init.sh
- CMD ["html/docker/init.sh"]
+ RUN chmod +x ./docker/init.sh
+ CMD ["docker/init.sh"]
 
 VOLUME /vendor
 VOLUME /var/www/html
