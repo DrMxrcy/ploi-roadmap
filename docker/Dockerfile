@@ -1,7 +1,6 @@
 FROM php:8.1.5-fpm-alpine3.15
 
-COPY --chown=33:33 . /var/www/html
-
+FROM docker.io/tiredofit/nginx-php-fpm:${PHP_BASE}-${DISTRO}
 WORKDIR /var/www/html
 
 #install GD
@@ -19,7 +18,7 @@ RUN apk add --no-cache libzip-dev && docker-php-ext-configure zip \
 RUN apk add npm
 
 # Upgrading Node
-RUN npm cache clean -f
+RUN npm cache clean -f       
 RUN npm install -g n
 
 RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
@@ -28,6 +27,7 @@ RUN apk add --no-cache icu-dev  && docker-php-ext-configure intl \
 # Get latest Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Expose port 9000
 RUN chown -R www-data:www-data /var/www
 
 # Expose port 9000 and start php-fpm server
@@ -46,12 +46,11 @@ RUN chown -R www-data:www-data /var/www
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
 CMD ["php-fpm"]
-        
+
 
 
 #Run SH
-# RUN chmod +x docker/init.sh
+RUN chmod +x ./docker/init.sh
 
 VOLUME /vendor
 VOLUME /var/www/html
-#CMD ["docker/init.sh"]
