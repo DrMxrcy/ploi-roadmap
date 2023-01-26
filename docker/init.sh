@@ -31,5 +31,5 @@ php artisan migrate
 echo -e "[INFO] Running On Port 9000"
 
 echo -e "[INFO] To Finish Setup, Run php artisan roadmap:install and type yes for everything"
-php-fpm
+php artisan serve --port=9000
 
